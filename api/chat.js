@@ -24,26 +24,19 @@ export default async function handler(req, res) {
     return res.status(400).json({ reply: "Wait, I didn't catch that. What was your question?" });
   }
 
-  try {
-    // 3. The most stable URL for 2026
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        contents: [{ parts: [{ text: message }] }]
-      })
-    });
-
-    const data = await response.json();
-
-    if (data.error) {
-      return res.status(200).json({ reply: `Google Error: ${data.error.message}` });
+ try {
+    // This calls the "ListModels" command the error mentioned
+    const listResponse = await fetch(`https://generativelanguage.googleapis.com/v1beta/models?key=${process.env.GEMINI_API_KEY}`);
+    const listData = await listResponse.json();
+    
+    // This will print the list of available models directly in your chat box
+    if (listData.models) {
+        const modelNames = listData.models.map(m => m.name.replace('models/', '')).join(', ');
+        return res.status(200).json({ reply: "Available models: " + modelNames });
+    } else {
+        return res.status(200).json({ reply: "Could not list models. Check API Key." });
     }
-
-    const aiMessage = data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm not sure how to answer that.";
-    res.status(200).json({ reply: aiMessage });
-
-  } catch (error) {
-    res.status(500).json({ reply: "My circuits are a bit fried. Can you try again?" });
-  }
+} catch (err) {
+    res.status(500).json({ reply: "Scanner failed." });
 }
+

@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  // 1. Mandatory Headers for GitHub Pages
+  // 1. Headers for GitHub Pages
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
@@ -7,13 +7,15 @@ export default async function handler(req, res) {
   if (req.method === 'OPTIONS') return res.status(200).end();
 
   try {
-    // 2. Safely get the message
-    let body = req.body;
-    if (typeof body === 'string') body = JSON.parse(body);
-    const userMessage = body?.message || "Hi";
+    // 2. Safety check for the message (Prevents "Unexpected end of input")
+    if (!req.body || Object.keys(req.body).length === 0) {
+      return res.status(200).json({ reply: "I'm connected! Type something to start." });
+    }
 
-    // 3. The 2026 Stable URL (v1beta with the flash-latest suffix)
-    const apiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${process.env.GEMINI_API_KEY}`;
+    const userMessage = req.body.message || "Hi";
+
+    // 3. 2026 Model Name (Gemini 3 Flash)
+    const apiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${process.env.GEMINI_API_KEY}`;
 
     const response = await fetch(apiURL, {
       method: 'POST',
@@ -25,20 +27,15 @@ export default async function handler(req, res) {
 
     const data = await response.json();
 
-    // 4. Detailed Error Reporting
     if (data.error) {
-      return res.status(200).json({ 
-        reply: `Google says: ${data.error.message} (Code: ${data.error.code})` 
-      });
+      // If gemini-3 fails, we try the 2.5 stable fallback
+      return res.status(200).json({ reply: `Google Error: ${data.error.message}` });
     }
 
-    // 5. Send back the response
-    const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm online, but I have no words!";
+    const aiText = data.candidates?.[0]?.content?.parts?.[0]?.text || "I'm thinking, but I can't find the words.";
     res.status(200).json({ reply: aiText });
 
   } catch (error) {
-    // If it hits here, something is wrong with the code itself
-    console.error(error);
     res.status(200).json({ reply: "Bridge Error: " + error.message });
   }
 }

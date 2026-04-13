@@ -9,12 +9,11 @@ title: Atefeh Rohani
 
 <nav style="text-align: center; margin-bottom: 20px;">
     <a href="index.html" style="margin: 0 10px; font-weight: bold; text-decoration: none; color: #159957;">Home</a>
-   <a href="bio.html" style="margin: 0 10px; text-decoration: none; color: #159957;">Short Bio</a>
-   <a href="publications.html" style="margin: 0 10px; text-decoration: none; color: #159957;">Publications</a>
+    <a href="bio.html" style="margin: 0 10px; text-decoration: none; color: #159957;">Short Bio</a>
+    <a href="publications.html" style="margin: 0 10px; text-decoration: none; color: #159957;">Publications</a>
     <a href="projects.html" style="margin: 0 10px; text-decoration: none; color: #159957;">Projects</a>
     <a href="contact.html" style="margin: 0 10px; text-decoration: none; color: #159957;">Contact</a>
 </nav>
-
 
 <div id="chat-container" style="position: fixed; bottom: 20px; right: 20px; width: 300px; background: white; border: 1px solid #ccc; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); font-family: sans-serif; display: none; flex-direction: column; overflow: hidden; z-index: 1000;">
     <div style="background: #007bff; color: white; padding: 10px; font-weight: bold; display: flex; justify-content: space-between;">
@@ -30,16 +29,13 @@ title: Atefeh Rohani
 
 <button id="chat-button" onclick="toggleChat()" style="position: fixed; bottom: 20px; right: 20px; width: 50px; height: 50px; border-radius: 50%; background: #007bff; color: white; border: none; cursor: pointer; font-size: 24px; z-index: 1000;">💬</button>
 
-
-
-
 <script>
-    // Add this inside your <script> tag
-window.onload = function() {
-    const chatBox = document.getElementById('chat-box');
-    chatBox.innerHTML += `<div style="align-self: flex-start; background: #f1f1f1; padding: 8px; border-radius: 8px; max-width: 80%;">Hi! I'm Atefeh's assistant. How can I help you today?</div>`;
-};
-   const VERCEL_URL = 'https://atefeh-rohani-github-io.vercel.app/api/chat';
+    const VERCEL_URL = 'https://atefeh-rohani-github-io.vercel.app/api/chat';
+
+    window.onload = function() {
+        const chatBox = document.getElementById('chat-box');
+        chatBox.innerHTML += `<div style="align-self: flex-start; background: #f1f1f1; padding: 8px; border-radius: 8px; max-width: 80%;">Hi! I'm Atefeh's assistant. How can I help you today?</div>`;
+    };
 
     function toggleChat() {
         const container = document.getElementById('chat-container');
@@ -50,58 +46,58 @@ window.onload = function() {
     }
 
     async function sendMessage() {
-    const input = document.getElementById('user-input');
-    const message = input.value.trim();
-    if (!message) return;
+        const input = document.getElementById('user-input');
+        const chatBox = document.getElementById('chat-box');
+        const message = input.value.trim();
+        
+        if (!message) return;
 
-    // Display user message in UI... (your current code)
+        // Display user message
+        chatBox.innerHTML += `<div style="align-self: flex-end; background: #e1f5fe; padding: 8px; border-radius: 8px; max-width: 80%;">${message}</div>`;
+        input.value = '';
+        chatBox.scrollTop = chatBox.scrollHeight;
 
-    try {
-        const response = await fetch(VERCEL_URL, {
-            method: 'POST',
-            headers: { 
-                'Content-Type': 'application/json' // MUST be present
-            },
-            body: JSON.stringify({ message: message }) // MUST be a stringified object
-        });
+        try {
+            const response = await fetch(VERCEL_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ message: message })
+            });
 
-        const data = await response.json();
-        // Display AI response... (your current code)
-    } catch (e) {
-        console.error("Chat error:", e);
-    }
-}
+            const data = await response.json();
             
             // Display AI response
             chatBox.innerHTML += `<div style="align-self: flex-start; background: #f1f1f1; padding: 8px; border-radius: 8px; max-width: 80%;">${data.reply}</div>`;
             chatBox.scrollTop = chatBox.scrollHeight;
         } catch (error) {
-            chatBox.innerHTML += `<div style="color: red;">Error connecting to AI.</div>`;
+            chatBox.innerHTML += `<div style="color: red; align-self: center;">Error connecting to AI.</div>`;
         }
     }
 
-    // Allow "Enter" key to send
     document.getElementById('user-input').addEventListener('keypress', function (e) {
         if (e.key === 'Enter') sendMessage();
     });
 </script>
 
-
 <hr>
 
 <h2 id="bio">About Me</h2>
-<li><strong>Atefeh Rohani 
-<p>Applied Scientist | Formal Verification & AI Reliability</strong></li></p>
+<p><strong>Atefeh Rohani</strong><br>
+Applied Scientist | Formal Verification & AI Reliability</p>
+
 <p>
     I am a Senior Researcher at the University of Bern specializing in the intersection of Formal Methods, Machine Learning, and Safety-Critical Systems. With over six years of experience and a PhD in Computer Science, my work focuses on enhancing the reliability and societal trust of autonomous systems, such as Unmanned Aerial Vehicles (UAVs) and space software.
 </p>
+
 <p>
-My technical expertise spans the development of predictive AI models, particularly for time-series data, and the integration of formal verification with ML testing frameworks to ensure high-assurance software architectures. I have successfully spearheaded multidisciplinary R&D projects, transitioning complex models from simulation to real-world deployment, and have been awarded research funding from the <a href="https://haslerstiftung.ch">Hasler foundation</a>  for my work on UAV reliability (collaboration with Sebastiano Panichella).
+My technical expertise spans the development of predictive AI models, particularly for time-series data, and the integration of formal verification with ML testing frameworks to ensure high-assurance software architectures. I have successfully spearheaded multidisciplinary R&D projects, transitioning complex models from simulation to real-world deployment, and have been awarded research funding from the <a href="https://haslerstiftung.ch">Hasler foundation</a> for my work on UAV reliability (collaboration with Sebastiano Panichella).
 </p>
+
 <p>
 Beyond research, I am an active educator and contributor to the scientific community, having served as a Teaching Assistant for courses in Advanced Algorithms, Computability and Complexity Theory and Justification Logic. Outside of the lab, I am a soprano in the Bahar Choir and enjoy hiking and biking through the Swiss Alps.
 </p>
-    <div style="text-align: center; margin-top: 30px;">
+
+<div style="text-align: center; margin-top: 30px;">
     <a href="CV_AS_FVE.pdf" class="btn" target="_blank" style="
         background-color: #159957; 
         color: white; 
@@ -115,9 +111,7 @@ Beyond research, I am an active educator and contributor to the scientific commu
     </a>
 </div>
 
-
-
 <p>
     Connect with me on <a href="https://www.linkedin.com/in/atefeh-rohani">LinkedIn</a> or follow my 
-    coding journey on <a href="">GitHub</a>.
+    coding journey on <a href="https://github.com/atefeh-rohani">GitHub</a>.
 </p>

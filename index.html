@@ -61,10 +61,10 @@ window.onload = function() {
 
         try {
             const response = await fetch(VERCEL_URL, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ message: message })
-            });
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' }, // This line is vital!
+    body: JSON.stringify({ message: message })      // This must match 'message'
+});
 
             const data = await response.json();
             

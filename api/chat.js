@@ -13,28 +13,33 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 3. Call Gemini
+    // We use the 'v1' stable endpoint
     const response = await fetch(`https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: message }] }]
+        contents: [{
+          parts: [{ text: message }]
+        }]
       })
     });
 
     const data = await response.json();
 
-    // 4. Handle Gemini Errors (like invalid API key)
     if (data.error) {
-      console.error("Gemini Error:", data.error);
-      return res.status(500).json({ reply: `Gemini Error: ${data.error.message}` });
+      // This will help us see exactly what the API is complaining about
+      return res.status(200).json({ reply: `Error from Google: ${data.error.message}` });
     }
 
-    const aiMessage = data.candidates?.[0]?.content?.parts?.[0]?.text || "I couldn't think of a response.";
-    res.status(200).json({ reply: aiMessage });
+    // Checking if the response has the expected structure
+    if (data.candidates && data.candidates[0].content) {
+      const aiMessage = data.candidates[0].content.parts[0].text;
+      res.status(200).json({ reply: aiMessage });
+    } else {
+      res.status(200).json({ reply: "The AI returned an empty response. Check your API quota." });
+    }
 
   } catch (error) {
-    console.error("Vercel Crash:", error);
-    res.status(500).json({ reply: "The server crashed. Check Vercel logs." });
+    res.status(500).json({ reply: "Connection failed. Please try again later." });
   }
 }

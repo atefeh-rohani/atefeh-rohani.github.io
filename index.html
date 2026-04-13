@@ -50,23 +50,27 @@ window.onload = function() {
     }
 
     async function sendMessage() {
-        const input = document.getElementById('user-input');
-        const chatBox = document.getElementById('chat-box');
-        const message = input.value.trim();
-        if (!message) return;
+    const input = document.getElementById('user-input');
+    const message = input.value.trim();
+    if (!message) return;
 
-        // Display user message
-        chatBox.innerHTML += `<div style="align-self: flex-end; background: #e1f5fe; padding: 8px; border-radius: 8px; max-width: 80%;">${message}</div>`;
-        input.value = '';
+    // Display user message in UI... (your current code)
 
-        try {
-            const response = await fetch(VERCEL_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' }, // This line is vital!
-    body: JSON.stringify({ message: message })      // This must match 'message'
-});
+    try {
+        const response = await fetch(VERCEL_URL, {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json' // MUST be present
+            },
+            body: JSON.stringify({ message: message }) // MUST be a stringified object
+        });
 
-            const data = await response.json();
+        const data = await response.json();
+        // Display AI response... (your current code)
+    } catch (e) {
+        console.error("Chat error:", e);
+    }
+}
             
             // Display AI response
             chatBox.innerHTML += `<div style="align-self: flex-start; background: #f1f1f1; padding: 8px; border-radius: 8px; max-width: 80%;">${data.reply}</div>`;

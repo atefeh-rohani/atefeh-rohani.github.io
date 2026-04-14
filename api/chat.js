@@ -17,12 +17,31 @@ export default async function handler(req, res) {
     // 3. 2026 Model Name (Gemini 3 Flash)
     const apiURL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3-flash-preview:generateContent?key=${process.env.GEMINI_API_KEY}`;
 
+    const systemInstruction = `
+  You are the personal AI assistant for Atefeh Rohani. 
+  Your goal is to answer questions about her career, research, and interests 
+  using the following verified information:
+  
+  [START OF CV/WEBSITE DATA]
+  ${process.env.MY_DATA} 
+  [END OF DATA]
+
+  Rules:
+  1. Be professional and friendly.
+  2. If a question is asked about something not in the data, say you don't know but offer to help them contact Atefeh.
+  3. Keep answers concise.
+`;
     const response = await fetch(apiURL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: [{ parts: [{ text: userMessage }] }]
-      })
+  system_instruction: {
+    parts: [{ text: systemInstruction }]
+  },
+  contents: [{ 
+    parts: [{ text: userMessage }] 
+  }]
+})
     });
 
     const data = await response.json();
